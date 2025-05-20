@@ -1,17 +1,26 @@
 package nl.inholland.javajwtstarter.configuration;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.models.*;
+import io.swagger.v3.oas.models.security.*;
+import org.springframework.context.annotation.*;
 
 @Configuration
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        in = SecuritySchemeIn.HEADER )
 public class OpenApiConfig {
-    // No methods needed — annotation is enough }
+    @Bean
+    public OpenAPI defineOpenApi() {
+        // Security scheme for JWT Bearer token
+        SecurityScheme bearerAuth = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER)
+                .name("Authorization");
+
+        SecurityRequirement securityRequirement = new SecurityRequirement()
+                .addList("bearerAuth");
+
+        return new OpenAPI()
+                .components(new Components().addSecuritySchemes("bearerAuth", bearerAuth))
+                .addSecurityItem(securityRequirement);
+    }
 }
